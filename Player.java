@@ -38,7 +38,7 @@ public class Player {
         return power;
     }
 
-    public Player( LinkedList playerCards , int rule, boolean power, boolean pass) {
+    public Player(Server.ClientHandler clientType, LinkedList playerCards , int rule, boolean power, boolean pass) {
         this.clientType = clientType;
         this.playerCards = playerCards;
         this.rule = rule;
@@ -51,8 +51,7 @@ public class Player {
             if (deckofCards.isEmpty()) {
                 i = 0;
                 for (int j = 0; j < playerCount; j++) {
-                    players[j] = new Player(playerCards[i], 1, false, false);
-                    players[j].setClientType(Server.playerStorage.removeFirst());
+                    players[j] = new Player(Server.getPlayerClient(), playerCards[i], 1, false, false);
                     i++;
                 }
                 return players;

@@ -7,7 +7,7 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.Scanner;
 
-public class Game {
+public class Game implements Runnable{
     private boolean rule;
     private LinkedList<Card> pile;
     private String[] playedCards;
@@ -33,7 +33,23 @@ public class Game {
         }
         return -1;
     }
-
+public void run() {
+    Deck deckofCards = new Deck();
+    LinkedList<Card> deckList = deckofCards.getDeck();
+    int playerCount = Server.getPlayerCount();
+    Player[] players = new Player[playerCount];
+    LinkedList[] playerCards = new LinkedList[playerCount];
+    for (int i = 0; i < playerCount; i++) {
+        playerCards[i] = new LinkedList<Player>();
+    }
+    Server.ClientHandler client =  Server.getPlayerClient();
+    players = Player.addCardstoPlayers(0, players, deckList, playerCards, playerCount);
+    for (int i = 0; i < players.length; i++) {
+        players[i].getClientType().sendMessage("You are player " + (i + 1));
+    }
+    System.out.printf("Starting game with " + playerCount + " players...");
+    round(players);
+}
     public void round(Player[] players) {
 
         System.out.println("Starting game...");

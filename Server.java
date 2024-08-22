@@ -15,6 +15,8 @@ class Server {
         startGame = true;
     }
 
+
+
     public static void main(String[] args) {
         PrintWriter out = null;
         BufferedReader in = null;
@@ -43,6 +45,7 @@ class Server {
                 playerStorage.add(clientSock);
                 System.out.println("Total players that have joined: " + playerCount);
             }
+
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
@@ -56,23 +59,29 @@ class Server {
         }
     }
 
-    public static void startGame() {
-        startGame = true;
-        Deck deckofCards = new Deck();
-        LinkedList<Card> deckList = deckofCards.getDeck();
-        Player[] players = new Player[playerCount];
-        LinkedList[] playerCards = new LinkedList[playerCount];
-        for (int i = 0; i < playerCount; i++) {
-            playerCards[i] = new LinkedList<Player>();
-        }
-        players = Player.addCardstoPlayers(0, players, deckList, playerCards, playerCount);
-        for (int i = 0; i < players.length; i++) {
-            players[i].getClientType().sendMessage("You are player " + (i + 1));
-        }
-        System.out.printf("Starting game with " + playerCount + " players...");
-        Game newRound = new Game();
-        newRound.round(players);
+//    public static void startGame() {
+//        Deck deckofCards = new Deck();
+//        LinkedList<Card> deckList = deckofCards.getDeck();
+//        Player[] players = new Player[playerCount];
+//        LinkedList[] playerCards = new LinkedList[playerCount];
+//        for (int i = 0; i < playerCount; i++) {
+//            playerCards[i] = new LinkedList<Player>();
+//        }
+//        players = Player.addCardstoPlayers(0, players, deckList, playerCards, playerCount);
+//        for (int i = 0; i < players.length; i++) {
+//            players[i].getClientType().sendMessage("You are player " + (i + 1));
+//        }
+//        System.out.printf("Starting game with " + playerCount + " players...");
+//        Game game = new Game();
+//        game.round(players);
+//    }
+    public static int getPlayerCount() {
+        return playerCount;
     }
+    public static ClientHandler getPlayerClient(){
+        return playerStorage.removeFirst();
+    }
+
 
     // ClientHandler class
     static class ClientHandler implements Runnable {
@@ -121,7 +130,8 @@ class Server {
                         if (!startGame) {
                             line = null;
                             playerInput = null;
-                            startGame();
+                            Game newRound = new Game();
+                            new Thread(newRound).start();
                         } else {
                             out.println("Game has already started!");
                         }
