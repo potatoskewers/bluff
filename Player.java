@@ -48,10 +48,12 @@ public class Player {
 
 
         public static Player[] addCardstoPlayers(int i, Player[] players, LinkedList<Card> deckofCards, LinkedList<Card>[] playerCards, int playerCount) {
+            LinkedList<Server.ClientHandler> clientList = Server.getPlayerClient();
             if (deckofCards.isEmpty()) {
                 i = 0;
                 for (int j = 0; j < playerCount; j++) {
-                    players[j] = new Player(Server.getPlayerClient(), playerCards[i], 1, false, false);
+                    Server.ClientHandler client = clientList.get(j);
+                    players[j] = new Player(client, playerCards[j], i, false, false);
                     i++;
                 }
                 return players;
@@ -61,7 +63,7 @@ public class Player {
             }
             playerCards[i].add(deckofCards.pop());
             return addCardstoPlayers(i + 1, players, deckofCards, playerCards, playerCount);
-    }
+        }
 
     @Override
     public String toString() {

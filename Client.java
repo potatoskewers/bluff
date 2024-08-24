@@ -45,11 +45,7 @@ class Client {
                 // sending the user input to server
                 out.println(line);
                 out.flush();
-                if ("Start".equalsIgnoreCase(line)){
-                    out.println("Start");
-                    out.flush();
                 }
-            }
 
             // closing the scanner object
             sc.close();

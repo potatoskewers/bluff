@@ -8,7 +8,7 @@ import static java.lang.System.out;
 class Server {
     static boolean isFirstClient = false;
     public static int playerCount = 0;
-    static LinkedList<ClientHandler> playerStorage = new LinkedList<>();
+    public static LinkedList<ClientHandler> playerStorage = new LinkedList<>();
     static boolean startGame = false;
 
     public static void setStartGame() {
@@ -78,8 +78,8 @@ class Server {
     public static int getPlayerCount() {
         return playerCount;
     }
-    public static ClientHandler getPlayerClient(){
-        return playerStorage.removeFirst();
+    public static LinkedList<ClientHandler> getPlayerClient(){
+        return playerStorage;
     }
 
 
@@ -126,16 +126,12 @@ class Server {
             String line;
             while ((line = in.readLine()) != null) {
                 if ("Start".equalsIgnoreCase(line)) {
-                    synchronized (Server.class) {
                         if (!startGame) {
-                            line = null;
-                            playerInput = null;
                             Game newRound = new Game();
                             new Thread(newRound).start();
                         } else {
                             out.println("Game has already started!");
                         }
-                    }
                 } else {
                     synchronized (lock){
                         playerInput = line;

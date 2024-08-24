@@ -34,15 +34,15 @@ public class Game implements Runnable{
         return -1;
     }
 public void run() {
+    Server.setStartGame();
     Deck deckofCards = new Deck();
-    LinkedList<Card> deckList = deckofCards.getDeck();
+    LinkedList<Card> deckList = deckofCards.getDeck(); //deck of cards in a linkedlist
     int playerCount = Server.getPlayerCount();
     Player[] players = new Player[playerCount];
     LinkedList[] playerCards = new LinkedList[playerCount];
     for (int i = 0; i < playerCount; i++) {
         playerCards[i] = new LinkedList<Player>();
     }
-    Server.ClientHandler client =  Server.getPlayerClient();
     players = Player.addCardstoPlayers(0, players, deckList, playerCards, playerCount);
     for (int i = 0; i < players.length; i++) {
         players[i].getClientType().sendMessage("You are player " + (i + 1));
@@ -66,16 +66,18 @@ public void run() {
                 System.out.println("Player " + yourMove + ", please state the card rule:");
                 int rule = Integer.parseInt(players[currentPlayer].getClientType().getPlayerInput());
                 System.out.println("The rule is " + rule + "!");
-                roundStart(currentPlayer, players, rule);
+                int moveCounter = 0;
+                roundStart(currentPlayer, players, rule, moveCounter);
         }
     }
 
-    private int roundStart(int i, Player[] players, int rule) {
+    private int roundStart(int i, Player[] players, int rule, int moveCounter) {
         if (i >= players.length) {
             i = 0; // Loop back to the first player if needed
         }
             if (!players[i].isPass()) {
-                players[i].getClientType().sendMessage("Player " + (i + 1) + ", Your move");
+                moveCounter += 1;
+                players[i].getClientType().sendMessage("Player " + (i + 1) + ", Your move. This is move #" + (moveCounter));
                 players[i].getClientType().sendMessage("Your available cards: " + players[i].getPlayerCards());
                 String input = players[i].getClientType().getPlayerInput();
                 System.out.println(input);
@@ -84,13 +86,13 @@ public void run() {
                 } else if (input.equals("pass")) {
                     System.out.println("Player " + (i + 1) + " passed.");
                     players[i].setPass(true);
-                    return roundStart(i + 1, players, rule); // Move to the next player
+                    return roundStart(i + 1, players, rule, moveCounter); // Move to the next player
                 } else {
                     move(input, i, players, rule);
                 }
             }
 
-        return roundStart(i + 1, players, rule); // Move to the next player
+        return roundStart(i + 1, players, rule, moveCounter + 1); // Move to the next player
     }
 
     private void contest(){
