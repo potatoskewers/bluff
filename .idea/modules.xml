@@ -3,6 +3,12 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/JFULLstack.iml" filepath="$PROJECT_DIR$/.idea/JFULLstack.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/complete.messaging-stomp-websocket.main.iml" filepath="$PROJECT_DIR$/.idea/modules/complete.messaging-stomp-websocket.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/complete.messaging-stomp-websocket.test.iml" filepath="$PROJECT_DIR$/.idea/modules/complete.messaging-stomp-websocket.test.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/initial.messaging-stomp-websocket.iml" filepath="$PROJECT_DIR$/.idea/modules/initial.messaging-stomp-websocket.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/initial.messaging-stomp-websocket.main.iml" filepath="$PROJECT_DIR$/.idea/modules/initial.messaging-stomp-websocket.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/initial.messaging-stomp-websocket.test.iml" filepath="$PROJECT_DIR$/.idea/modules/initial.messaging-stomp-websocket.test.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/messaging-stomp-websocket.iml" filepath="$PROJECT_DIR$/.idea/modules/messaging-stomp-websocket.iml" />
       <module fileurl="file://$PROJECT_DIR$/src/src.iml" filepath="$PROJECT_DIR$/src/src.iml" />
     </modules>
   </component>
