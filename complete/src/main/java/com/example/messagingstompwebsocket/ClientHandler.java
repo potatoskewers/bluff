@@ -25,7 +25,6 @@ public class ClientHandler extends DefaultHandshakeHandler {
     public void setRandomID(String randomID) {
         this.randomID = randomID;
     }
-
     @EventListener
     public void handleSessionConnected(SessionConnectEvent event) {
         System.out.println("logging session connect event");

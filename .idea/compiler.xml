@@ -2,6 +2,11 @@
 <project version="4">
   <component name="CompilerConfiguration">
     <bytecodeTargetLevel>
+      <module name="complete.messaging-stomp-websocket.main" target="17" />
+      <module name="complete.messaging-stomp-websocket.test" target="17" />
+      <module name="initial.messaging-stomp-websocket" target="17" />
+      <module name="initial.messaging-stomp-websocket.main" target="17" />
+      <module name="initial.messaging-stomp-websocket.test" target="17" />
       <module name="messaging-stomp-websocket" target="17" />
     </bytecodeTargetLevel>
   </component>

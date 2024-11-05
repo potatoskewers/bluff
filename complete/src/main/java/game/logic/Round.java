@@ -7,6 +7,7 @@ import org.springframework.stereotype.Component;
 import java.util.LinkedList;
 
 import static game.logic.Game.playerIDs;
+
 @Component
 public class Round implements Runnable{
     private static int firstPlayer;
@@ -18,14 +19,16 @@ public class Round implements Runnable{
     private static Player[] players;
     private static Thread currentThread;
     private static MessagingService messagingService;
+    private static String gameId;
 
     @Autowired
-    public Round(MessagingService messagingService) {
+    public Round(MessagingService messagingService, String gameId) {
         this.rule = rule;
         this.pile = new LinkedList<Card>();
         this.clientPlayedCards = new LinkedList<Card>();
         this.playedCards = playedCards;
         players = Game.getPlayers();
+        Round.gameId = gameId;
         this.messagingService = messagingService;
 
     }
@@ -40,6 +43,10 @@ public class Round implements Runnable{
 
     @Override
     public void run() {
+        for(int i = 0; i < players.length; i++) {
+            updateCard(players[i].getPlayerCards(), players[i].getPlayerID());
+
+        }
         System.out.println("starting a round thread!");
         currentThread = Thread.currentThread();
         for (int i = 0; i < players.length; i++) {
@@ -50,7 +57,13 @@ public class Round implements Runnable{
         int yourMove = firstPlayer + 1;
         sendMessage("Player " + yourMove + ", please state the card rule:", players[firstPlayer].getPlayerID());
         sendMessage("Player " + yourMove + "Your available cards: ", players[firstPlayer].getPlayerID());
-        rule = Integer.parseInt(InputHandler.getPlayerInput(players[firstPlayer].getPlayerID()));
+        try {
+            rule = Integer.parseInt(InputHandler.getPlayerInput(players[firstPlayer].getPlayerID()));
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("catching error in input");
+        }
+        System.out.println("testlog1");
         broadcast("The rule is " + rule + "!");
         System.out.println(("The rule is " + rule + "!"));
         int moveCounter = 0;
@@ -66,7 +79,7 @@ public class Round implements Runnable{
         String ID = players[currentPlayer].getPlayerID();
         if (!players[currentPlayer].isPass()) {
                 sendMessage("Player " + (currentPlayer + 1) + ", Your move. ", ID);
-                sendMessage("Player " + (currentPlayer + 1) + "Your available cards: " + players[currentPlayer].getPlayerCards() + "You have: " + players[currentPlayer].getPlayerCards().size() + " left.", ID);
+//                sendMessage("Player " + (currentPlayer + 1) + "Your available cards: " + players[currentPlayer].getPlayerCards() + "You have: " + players[currentPlayer].getPlayerCards().size() + " left.", ID);
                 String input = InputHandler.getPlayerInput(ID);
                 if (input.equals("pass")) {
                     System.out.println("Player " + (currentPlayer + 1) + " passed.");
@@ -133,6 +146,11 @@ public class Round implements Runnable{
         return firstPlayer;
     }
 
+    public static void updateCard(LinkedList<Card> cards, String username) {
+        System.out.println("updating cards for user " + username + "With " + cards.size() + " cards");
+        messagingService.cardUpdater(username, cards, gameId);
+    }
+
     public static void setFirstPlayer(int firstPlayer) {
         Round.firstPlayer = firstPlayer;
     }
@@ -178,11 +196,11 @@ public class Round implements Runnable{
     }
 
     public static void broadcast(String message) {
-        messagingService.broadcast(playerIDs, message);
+        messagingService.broadcast(playerIDs, message, gameId);
     }
 
     public static void sendMessage(String message, String username) {
-        messagingService.sendPrivateMessage(username, message);
+        messagingService.sendPrivateMessage(username, message, gameId);
     }
 
 }

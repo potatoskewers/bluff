@@ -19,11 +19,13 @@ public class Game implements Runnable{
     private static Thread currentThread;
 
     private static MessagingService messagingService; // CORRECT
+    private static String gameId = null;
 
 
     @Autowired
-    public Game(LinkedList<String> playerIDs, MessagingService messagingService) {
+    public Game(LinkedList<String> playerIDs, MessagingService messagingService, String gameId) {
         this.playerIDs = playerIDs;
+        Game.gameId = gameId;
         this.rule = rule;
         this.messagingService = messagingService;
     }
@@ -35,7 +37,7 @@ public class Game implements Runnable{
                 Card testElement = playerCards.get(j);
                 if(testElement.getRank() == 1 && testElement.getSuit() == "Spades"){
                     System.out.printf("Player " + (i + 1) + " Starts the game.");
-                    broadcast("Player " + (i + 1) + " Starts the game.");
+                    broadcast("Player " + (i + 1) + " Starts the game.", gameId);
                     players[i].setPower(true);
                     return i;
 
@@ -59,27 +61,33 @@ public class Game implements Runnable{
     }
     players = Player.addCardstoPlayers(playerIDs,0, players, deckList, playerCards, playerCount);
     for (int i = 0; i < players.length; i++) {
-        sendMessage("You are player " + (i + 1), players[i].getPlayerID());
+        sendMessage("You are player " + (i + 1), players[i].getPlayerID(), gameId);
+//        updateCard(players[i].getPlayerCards(), players[i].getPlayerID());
 //        players[i].getClientType().setPlayerNumber(i);
     }
     System.out.printf("Starting game with " + playerCount + " players...");
         System.out.println("Starting game...");
         firstStartingPower(players);
-        Round newRound = new Round(messagingService);
+        Round newRound = new Round(messagingService, gameId);
         new Thread(newRound).start();
 }
     public static Player[] getPlayers() {
         return players;
     }
 
-    public static void broadcast(String message) {
-        messagingService.broadcast(playerIDs, message);
+    public static void broadcast(String message, String gameId) {
+        messagingService.broadcast(playerIDs, message, gameId);
     }
 
-    public static void sendMessage(String message, String username) {
-        messagingService.sendPrivateMessage(username, message);
+    public static void sendMessage(String message, String username, String gameId) {
+        System.out.println("Sending" + message + " to " + username);
+        messagingService.sendPrivateMessage(username, message, gameId);
     }
 
+
+    public static String getGameId() {
+        return gameId;
+    }
 
     public static int getFirstPlayer() {
         return firstPlayer;
@@ -96,6 +104,8 @@ public class Game implements Runnable{
     public static int getRule() {
         return rule;
     }
+
+
 
     public static Thread getCurrentThread() {
         return currentThread;

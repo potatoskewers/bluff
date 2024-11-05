@@ -1,10 +1,14 @@
 package game.logic;
 
 import com.example.messagingstompwebsocket.MessagingService;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.HashMap;
 import java.util.LinkedList;
 
+@Controller
+@RestController
 public class Player {
     private final String playerID;
 //    private Server.ClientHandler clientType;

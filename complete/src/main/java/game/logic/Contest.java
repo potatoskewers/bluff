@@ -11,12 +11,14 @@ public class Contest {
     private final String sessionID;
     private static MessagingService messagingService;
     private static LinkedList<String> playerIDs;
+    private static String gameId = "";
     private int lastPlayer;
 
-    public Contest(String sessionID, MessagingService messagingService, LinkedList<String> playerIDs) {
+    public Contest(String sessionID, MessagingService messagingService, LinkedList<String> playerIDs, String gameId) {
         this.playerIDs = playerIDs;
         this.sessionID = sessionID;
         this.messagingService = messagingService;
+        this.gameId = gameId;
     }
 
     public void run() {
@@ -34,7 +36,7 @@ public class Contest {
             lastPlayer -= 1;
         }
         Player defendingPlayer = players[lastPlayer];
-        System.out.println("Player " + (challengerNumber + 1) + " is contesting " + "Player " + (lastPlayer + 1) +"'s played cards!");
+        broadcast("Player " + (challengerNumber + 1) + " is contesting " + "Player " + (lastPlayer + 1) +"'s played cards!");
         broadcast("Player " + (challengerNumber + 1) + " is contesting " + (lastPlayer + 1) +"'s played cards!");
 
         Player previousFirstPlayer = players[Round.getFirstPlayer()];
@@ -77,6 +79,7 @@ public class Contest {
     private static void checkWinner(LinkedList<Card> playedCards, int rule) {
         for(int i = 0; i < playedCards.size(); i++) {
             if (playedCards.get(i).getRank() != rule) {
+                System.out.println("setting lying as true...");
                 lying = true;
                 break;
             }
@@ -94,11 +97,11 @@ public class Contest {
     }
 
     public static void broadcast(String message) {
-        messagingService.broadcast(playerIDs, message);
+        messagingService.broadcast(playerIDs, message, gameId);
     }
 
     public static void sendMessage(String message, String username) {
-        messagingService.sendPrivateMessage(username, message);
+        messagingService.sendPrivateMessage(username, message, gameId);
     }
 
 }
