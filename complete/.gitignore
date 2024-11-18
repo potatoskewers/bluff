@@ -1,2 +1,16 @@
 build
 target
+static/
+.idea
+*.iml
+*.ipr
+*.iws
+*.class
+*.jar
+*.war
+*.ear
+*.log
+*.log.*
+*.log*
+*.tmp
+vite.config.js

@@ -11,15 +11,18 @@ const Game = () => {
     const [playedCards, setPlayedCards] = useState([]);
     const [message, setMessage] = useState([]);
     const [sentMessage, setSentMessage] = useState(null);
+    const [opponentCards, setOpponentCards] = useState([]);
     const {gameId } = useParams();
     const navigate = useNavigate();
 
+
     useEffect(() => {
-        const socket = new SockJS('/gs-guide-websocket');
+        const socket = new SockJS("http://localhost:8080/gs-guide-websocket");
         const client = over(socket);
         client.connect({}, () => {
             console.log('Connected');
             setClient(client)
+            client.send(`/app/connect-game/${gameId}`, {}, JSON.stringify({name: gameId}));
                 client.subscribe(`/topic/new-round/${gameId}`, (message) => {
                     //handle retrieving the gameID from the message
                     // const fetchedGameId = JSON.parse(message.body).content;
@@ -57,7 +60,21 @@ const Game = () => {
                 }
 
             });
+
+            client.subscribe(`/user/topic/opponent-card-count/${gameId}`, (greeting) => {
+                try {
+                    const playerCounts = JSON.parse(greeting.body);
+                    setOpponentCards(playerCounts); // Set the cards received from the server
+                    console.log("Opponent Cards received:", playerCounts);
+                } catch (error) {
+                    console.error("Error parsing incoming message:", error);
+                }
+            });
+
+
         }
+
+
 
         , (error) => {
             console.error('Connection error: ', error);
@@ -112,7 +129,7 @@ const Game = () => {
     function bs() {
         if (client) {
             const messageBs = JSON.stringify({ name: "bs" })
-            client.send("/app/private-messages", {}, messageBs);
+            client.send(`/app/private-messages/${gameId}`, {}, messageBs);
         }
     }
 
@@ -147,7 +164,7 @@ const Game = () => {
             }
 
             let sentCard = JSON.stringify({ name: (suit + rank) });
-            client.send("/app/private-messages", {}, sentCard);
+            client.send(`/app/private-messages/${gameId}`, {}, sentCard);
         }
         setPlayedCards([]);
     }
@@ -155,7 +172,7 @@ const Game = () => {
     function sendMessage() {
         const message = JSON.stringify({ name: sentMessage });
         console.log("Sending message: ", message);
-        client.send("/app/private-messages", {}, message);
+        client.send(`/app/private-messages/${gameId}`, {}, message);
     }
 
 
@@ -188,6 +205,29 @@ const Game = () => {
                 </div>
                 <button className="play" onClick={() => playCards(playedCards)}>click me to send cards!</button>
                 <button className="bullshit" onClick={() => bs()}>click me to BS the last player!</button>
+                <p>opponent cards</p>
+                {opponentCards ? (
+                    <div className="opponentCards">
+                        {opponentCards.map((player, index) => {
+                            // Check if player is not null or undefined before calling split
+                            if (player) {
+                                let [opponents, count] = player.split('.');
+                                return (
+                                    <div className="playerMap" key={index}>
+                                        <span className="player"> {opponents} </span>
+                                        <span className="count"> {count} </span>
+                                    </div>
+                                );
+                            } else {
+                                return null; // Skip rendering if player is null
+                            }
+                        })}
+                    </div>
+                ) : (
+                    <p>opponent card counts will be displayed here.</p>
+                )
+                }
+
                 <h1>Your Cards</h1>
                 {playedCards ? (
                     <div className="playedCards">

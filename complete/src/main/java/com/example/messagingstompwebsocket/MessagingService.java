@@ -20,6 +20,10 @@ public class MessagingService {
         messagingTemplate.convertAndSend(destination, new Greeting(message)); // Send the message
     }
 
+    public void opponentCardCountUpdater(String username, String[] cardCount, String gameId) {
+        String destination = "/user/" + username + "/topic/opponent-card-count/" + gameId; // Specify the user's destination
+        messagingTemplate.convertAndSend(destination, cardCount); // Send the message
+    }
     public void cardUpdater(String username, LinkedList<Card> cards, String gameId) {
         String destination = "/user/" + username + "/topic/display-cards/" + gameId; // Specify the user's destination
         String[] convertedCards = new String[cards.size()];
